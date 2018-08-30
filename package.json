@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "A chat application ubuilt with node, mongodb,express and socket.io",
   "main": "index.js",
-  "engine": {
+  "engines": {
     "node": "8.11.3",
     "npm": "5.6.0"
   },
