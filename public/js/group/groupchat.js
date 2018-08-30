@@ -4,6 +4,8 @@ $(document).ready(function(){
 	var room = $('#groupName').val();
 	var sender = $('#sender').val();
 
+	var userPic = $('#name-image').val();
+
 	socket.on('connect',function(){
 		console.log('Yea! User connected');
 
@@ -12,7 +14,7 @@ $(document).ready(function(){
 			name: sender
 		}
 		socket.emit('join',params, function(){
-			console.log('User has joined this channel');
+			//console.log('User has joined this channel');
 		});
 	});
 
@@ -38,7 +40,8 @@ $(document).ready(function(){
 		var template = $('#message-template').html();
 		var message = Mustache.render(template,{
 			text: data.text,
-			sender: data.from
+			sender: data.from,
+			userImage: data.image
 		});
 		$('#messages').append(message);
 		
@@ -52,10 +55,26 @@ $(document).ready(function(){
 		socket.emit('createMessage', {
 			text: msg,
 			room: room,
-			sender: sender
+			sender: sender,
+			userPic: userPic
 		}, function(){
 			$('#msg').val('');
 		});
+
+		$.ajax({
+			url:'/group/'+room,
+			type:"POST",
+			data:{
+				message: msg,
+				groupName:room
+
+			},
+			success:function(){
+				$('#msg').val('');
+			}
+		})
+
+
 	});
 
 });

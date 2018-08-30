@@ -13,19 +13,23 @@ const container = require('./container');
 const socketIO = require('socket.io');
 const {Users} = require('./helpers/UsersClass');
 const {Global} = require('./helpers/Global');
+const compression = require('compression');
+const helmet = require('helmet');
 
-container.resolve(function(users, _, admin, home, group,results){
+
+
+container.resolve(function(users, _, admin, home, group,results, privatechat,profile,interest,news){
 	
 	mongoose.Promise = global.Promise;
-	mongoose.connect('mongodb://localhost:27017/footballkik',{useNewUrlParser: true});//,
-
+	//mongoose.connect('mongodb://adminfootball:Hnirva83@ds137812.mlab.com:37812/footballkik',{useNewUrlParser: true});//,
+	mongoose.connect(process.env.MONGODB_URI,{useNewUrlParser: true});
 	const app = SetupExpress();
 
 	function SetupExpress(){
 		const app = express();
 		const server = http.createServer(app);
 		const io = socketIO(server);
-		server.listen(3000, function(){
+		server.listen(process.env.PORT || 3000, function(){
 			console.log('Listening on port 3000');
 		});
 
@@ -33,7 +37,8 @@ container.resolve(function(users, _, admin, home, group,results){
 
 		require('./socket/groupchat')(io,Users);
 		require('./socket/friend')(io);		
-		require('./socket/globalroom')(io, Global,_);			
+		require('./socket/globalroom')(io, Global,_);	
+		require('./socket/privatemessage')(io);
 
 		//Setup router
 		const router = require('express-promise-router')();
@@ -42,11 +47,23 @@ container.resolve(function(users, _, admin, home, group,results){
 		home.SetRouting(router);
 		group.SetRouting(router);
 		results.SetRouting(router);		
+		privatechat.SetRouting(router);		
+		profile.SetRouting(router);	
+		interest.SetRouting(router);
+		news.SetRouting(router);					
 
-		app.use(router);		
+		app.use(router);	
+
+		app.use(function(req,res){
+			res.render('404');
+		});
 	}
 
 	function ConfigureExpress(app){
+
+		app.use(compression());
+		app.use(helmet());
+
 		require('./passport/passport-local');
 		require('./passport/passport-facebook');
 		require('./passport/passport-google');
@@ -58,7 +75,7 @@ container.resolve(function(users, _, admin, home, group,results){
 		app.use(bodyParser.json());		
 		app.use(validator());
 		app.use(session({
-			secret: 'thisisasecretkey',
+			secret: 'process.env.SECRET_KEY',
 			resave: true,
 			saveUninitialized: true,
 			store: new MongoStore({mongooseConnection: mongoose.connection})
@@ -69,5 +86,6 @@ container.resolve(function(users, _, admin, home, group,results){
 		app.use(passport.session());
 
 		app.locals._=_;
+
 	}
 });

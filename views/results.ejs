@@ -25,7 +25,8 @@
 
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav navbar-right" id="reload">
-        <li><a href="#">Members</a></li>
+      <li><a href="/latest-football-news">Football News</a></li>        
+        <li><a href="/members">Members</a></li>
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><%= user.username %> <span class="caret"></span></a>
           <ul class="dropdown-menu">
@@ -91,7 +92,7 @@
                                 <div class="item col-md-4">
                                     <a style="text-decoration: none;" href="/group/<%= val2.name%>">
                                     <div class="thumbnail">
-                                       <img src="<%= val2.image %>" alt="">
+                                       <img src="https://s3.amazonaws.com/footballkiktest/<%= val2.image %>" alt="">
                                         <div class="caption">
                                             <h4><%= val2.name %></h4>
                                             

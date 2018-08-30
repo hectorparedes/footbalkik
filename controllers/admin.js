@@ -19,7 +19,6 @@ module.exports = function(formidable,Club,aws){
 			newClub.save((err) => {
 				res.render('admin/dashboard');
 			});
-			console.log('archivo...'+JSON.stringify(req.body));
 		},
 		uploadFile: (req,res)=>{
 			const form = new formidable.IncomingForm();
